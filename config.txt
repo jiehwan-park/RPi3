@@ -1,8 +1,22 @@
 arm_64bit=1
 disable_commandline_tags=2
 disable_overscan=1
+
+# Enable UART so we can use a TTL cable.
 enable_uart=1
 uart_2ndstage=1
-armstub=RPI_EFI.fd
+
+# hdmi
+hdmi_force_hotplug=1 
+hdmi_group=1
+config_hdmi_boost=4
+
+# Use the appropriate DTB for our device.
+device_tree=bcm2710-rpi-3-b.dtb
 device_tree_address=0x1f0000
 device_tree_end=0x200000
+dtoverlay=disable-bt
+
+armstub=RPI_EFI.fd
+
+kernel=kernel8.img

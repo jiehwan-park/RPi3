@@ -1,3 +1,83 @@
+# Feasibility Test  
+## Build 
+initialize build enviornment (customized to local build)
+> ./init.sh
+
+use github workflow yml file with act framework to build on local pc.
+> act -P ubuntu-latest=ubuntu-local-action --bind
+## Generated Boot Contents in `Build/RPi3/Artifacts/`
+1. rpi3 boot binaries
+2. firmware image : RPI_EFI.fd
+3. kernel binary and device tree
+4. grub
+## Build Output : RPI_EFI.fd 
+memory map
+```
+1. Offset 0x0  
+  Region Size = 0x10000  
+  Region File Name = edk2-non-osi/Platform/RaspberryPi/RPi3/TrustedFirmware/bl1.bin  
+3. Offset 0x20000  
+  Region Size = 0x10000  
+  Region File Name = edk2-non-osi/Platform/RaspberryPi/RPi3/TrustedFirmware/fip.bin  
+2. Offset 0x30000
+  Region Size = 0x1A0000
+  Region Name = FV
+```
+trusted firmware map
+```
+    0x00000000 +-----------------+
+               |       ROM       | BL1
+    0x00010000 +-----------------+
+               |     Nothing     |
+    0x00020000 +-----------------+
+               |       FIP       | BL2 + BL31
+    0x00030000 +-----------------+
+               |                 |
+               |  UEFI PAYLOAD   |
+               |                 |
+    0x001f0000 +-----------------+
+               |       DTB       | (Loaded by the VideoCore)
+    0x00200000 +-----------------+
+               |   Secure SRAM   | BL2, BL31
+    0x00300000 +-----------------+
+               |   Secure DRAM   | BL32 (Secure payload)
+    0x00400000 +-----------------+
+               |                 |
+               |                 |
+               | Non-secure DRAM | BL33
+               |                 |
+               |                 |
+    0x01000000 +-----------------+
+               |                 |
+               |       ...       |
+               |                 |
+    0x3F000000 +-----------------+
+               |       I/O       |
+```
+
+## Install to boot partition of SD Card
+>├── bcm2710-rpi-3-b.dtb  
+>├── bcm2710-rpi-3-b-plus.dtb  
+>├── bcm2710-rpi-cm3.dtb  
+>├── bootcode.bin  
+>├── config.txt  
+>├── fixup.dat  
+>├── start.elf  
+>├── RPI_EFI.fd  
+>├── firmware   
+>│   ├── brcmfmac43430-sdio.bin  
+>│   ├── brcmfmac43430-sdio.clm_blob  
+>│   ├── brcmfmac43430-sdio.txt  
+>│   ├── brcmfmac43455-sdio.bin  
+>│   ├── brcmfmac43455-sdio.clm_blob  
+>│   ├── brcmfmac43455-sdio.txt  
+>│   ├── LICENCE_bin+clm_blob.txt  
+>│   ├── LICENSE_txt.txt  
+>│   └── Readme.txt  
+>└── RPI_EFI.fd  
+
+<br><br><br>
+
 Raspberry Pi 3 UEFI Firmware Images
 ===================================
 

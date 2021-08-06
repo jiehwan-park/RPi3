@@ -15,8 +15,6 @@ jobs:
     - name: Set version
       id: set_version
       run: echo "::set-output name=version::${GITHUB_REF/refs\/tags\//}"
-    - name: Set up Linux environment
-      run: sudo apt install acpica-tools gcc-aarch64-linux-gnu python3-distutils uuid-dev
     - name: Check out EDK2 repositories
       uses: actions/checkout@v2
     - name: Check out EDK2 submodules
@@ -32,44 +30,16 @@ jobs:
         source edk2/edksetup.sh
         # EDK2's 'build' command doesn't play nice with spaces in environmnent variables, so we can't move the PCDs there...
         build -a AARCH64 -t GCC5 -p edk2-platforms/Platform/RaspberryPi/RPi3/RPi3.dsc -b DEBUG --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"https://github.com/pftf/RPi3" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{steps.set_version.outputs.version}}" ${BUILD_FLAGS}
-        build -a AARCH64 -t GCC5 -p edk2-platforms/Platform/RaspberryPi/RPi3/RPi3.dsc -b RELEASE --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"https://github.com/pftf/RPi3" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{steps.set_version.outputs.version}}" ${BUILD_FLAGS}
-        cp Build/RPi3/RELEASE_GCC5/FV/RPI_EFI.fd .
-    - name: Upload UEFI firmware artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: RPi3 UEFI Firmware ${{steps.set_version.outputs.version}} Artifacts
-        path: |
-          Build/RPi3/DEBUG_GCC5/FV/RPI_EFI.fd
-          Build/RPi3/RELEASE_GCC5/FV/RPI_EFI.fd
-    - name: Download Raspberry Pi support files
-      run: |
-        curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/bootcode.bin
-        curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/fixup.dat
-        curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/start.elf
-        curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/bcm2710-rpi-3-b.dtb
-        curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/bcm2710-rpi-3-b-plus.dtb
-        curl -O -L https://github.com/raspberrypi/firmware/raw/master/boot/bcm2710-rpi-cm3.dtb
+        # build -a AARCH64 -t GCC5 -p edk2-platforms/Platform/RaspberryPi/RPi3/RPi3.dsc -b RELEASE --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor=L"https://github.com/pftf/RPi3" --pcd gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString=L"UEFI Firmware ${{steps.set_version.outputs.version}}" ${BUILD_FLAGS}
     - name: Create UEFI firmware archive
-      run: zip -r RPi3_UEFI_Firmware_${{steps.set_version.outputs.version}}.zip RPI_EFI.fd bootcode.bin config.txt fixup.dat start.elf Readme.md *.dtb firmware
-    - name: Display SHA-256
-      run: sha256sum Build/RPi3/DEBUG_GCC5/FV/RPI_EFI.fd Build/RPi3/RELEASE_GCC5/FV/RPI_EFI.fd RPi3_UEFI_Firmware_${{steps.set_version.outputs.version}}.zip
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      with:
-        draft: false
-        prerelease: false
-        release_name: ${{steps.set_version.outputs.version}}
-        body: Raspberry Pi 3 UEFI Firmware ${{steps.set_version.outputs.version}}
-        tag_name: ${{steps.set_version.outputs.version}}
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      with:
-        upload_url: ${{steps.create_release.outputs.upload_url}}
-        asset_path: RPi3_UEFI_Firmware_${{steps.set_version.outputs.version}}.zip
-        asset_name: RPi3_UEFI_Firmware_${{steps.set_version.outputs.version}}.zip
-        asset_content_type: application/zip
+      run: |
+        [ -d "Build/RPi3/Artifacts" ] && rm -rf Build/RPi3/Artifacts
+        mkdir Build/RPi3/Artifacts
+        cp Build/RPi3/DEBUG_GCC5/FV/RPI_EFI.fd Build/RPi3/Artifacts/
+        cp -rf grub/* Build/RPi3/Artifacts/
+        cp -rf kernel/* Build/RPi3/Artifacts/
+        cp -rf rpi3-boot/* Build/RPi3/Artifacts/
+        cp config.txt Build/RPi3/Artifacts/
+        cp Readme.md Build/RPi3/Artifacts/
+        echo "Results in Build/RPi3/Artifacts"
+        ls -alh Build/RPi3/Artifacts
