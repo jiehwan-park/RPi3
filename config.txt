@@ -18,5 +18,3 @@ device_tree_end=0x200000
 dtoverlay=disable-bt
 
 armstub=RPI_EFI.fd
-
-kernel=kernel8.img

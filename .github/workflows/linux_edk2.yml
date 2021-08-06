@@ -38,8 +38,9 @@ jobs:
         cp Build/RPi3/DEBUG_GCC5/FV/RPI_EFI.fd Build/RPi3/Artifacts/
         cp -rf grub/* Build/RPi3/Artifacts/
         cp -rf kernel/* Build/RPi3/Artifacts/
-        cp -rf rpi3-boot/* Build/RPi3/Artifacts/
+        cp -rf rpi3-boot/bootcode.bin Build/RPi3/Artifacts/
+        cp -rf rpi3-boot/fixup.dat Build/RPi3/Artifacts/
+        cp -rf rpi3-boot/start.elf Build/RPi3/Artifacts/
         cp config.txt Build/RPi3/Artifacts/
-        cp Readme.md Build/RPi3/Artifacts/
         echo "Results in Build/RPi3/Artifacts"
         ls -alh Build/RPi3/Artifacts

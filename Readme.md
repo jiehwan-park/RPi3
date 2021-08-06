@@ -1,15 +1,24 @@
 # Feasibility Test  
 ## Build 
-initialize build enviornment (customized to local build)
+1. initialize build environment (customized to local build)
 > ./init.sh
-
-use github workflow yml file with act framework to build on local pc.
+2. use github workflow yml file with act framework to build on local pc.
 > act -P ubuntu-latest=ubuntu-local-action --bind
-## Generated Boot Contents in `Build/RPi3/Artifacts/`
-1. rpi3 boot binaries
-2. firmware image : RPI_EFI.fd
-3. kernel binary and device tree
-4. grub
+## Results : `Build/RPi3/Artifacts/`
+1. Copy to RPi3 booting partition (FAT16, LBA)
+2. Including :
+    - RPi3 boot binaries
+    - firmware image : RPI_EFI.fd
+    - kernel binary and device tree
+    - grub
+
+## Update external binaries
+1. ATF
+  - copy (bl1.bin, fip.bin) into `edk2-non-osi/Platform/RaspberryPi/RPi3/TrustedFirmware/`
+2. kernel
+  - copy image file and dts into `/kernel` folder
+3. grub
+  - copy grub efi and cfg into `/grub` folder
 ## Build Output : RPI_EFI.fd 
 memory map
 ```
