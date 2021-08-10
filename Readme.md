@@ -65,25 +65,29 @@ trusted firmware map
 ```
 
 ## Install to boot partition of SD Card
+>├── boot  
+>│   ├── aarch64  
+>│   │   ├── initrd.img  
+>│   │   └── kernel8.img  
+>│   └── grub  
+>│       ├── arm64-efi  
+>│       ├── efi.img  
+>│       ├── font.pf2  
+>│       └── grub.cfg  
+>├── EFI  
+>│   ├── BOOT  
+>│   │   └── bootaa64.efi  
+>│   └── debian  
+>│       └── grub.cfg  
+>├── overlays  
+>│   └── disable-bt.dtbo  
 >├── bcm2710-rpi-3-b.dtb  
->├── bcm2710-rpi-3-b-plus.dtb  
->├── bcm2710-rpi-cm3.dtb  
 >├── bootcode.bin  
 >├── config.txt  
 >├── fixup.dat  
->├── start.elf  
 >├── RPI_EFI.fd  
->├── firmware   
->│   ├── brcmfmac43430-sdio.bin  
->│   ├── brcmfmac43430-sdio.clm_blob  
->│   ├── brcmfmac43430-sdio.txt  
->│   ├── brcmfmac43455-sdio.bin  
->│   ├── brcmfmac43455-sdio.clm_blob  
->│   ├── brcmfmac43455-sdio.txt  
->│   ├── LICENCE_bin+clm_blob.txt  
->│   ├── LICENSE_txt.txt  
->│   └── Readme.txt  
->└── RPI_EFI.fd  
+>└── start.elf  
+
 
 <br><br><br>
 
